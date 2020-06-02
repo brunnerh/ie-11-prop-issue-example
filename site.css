@@ -1,0 +1,17 @@
+.light
+{
+	--fg: hsl(120, 100%, 23%);
+	--bg: #fff;
+}
+
+.dark
+{
+	--fg: hsl(120, 65%, 78%);
+	--bg: #333;
+}
+
+html, body
+{
+	background: var(--bg);
+	color: var(--fg);
+}
