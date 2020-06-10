@@ -1,10 +1,10 @@
-/*! ie11CustomProperties.js v3.1.0 | MIT License | https://git.io/fjXMN */
+/*! ie11CustomProperties.js v4.0.0 | MIT License | https://git.io/fjXMN */
 !function () {
 	'use strict';
 
 	// beta
 	const styles_of_getter_properties = {};
-	
+
 	// draw queue
 	let drawQueue = new Set();
 	let collecting = false;
@@ -91,6 +91,9 @@
 	}
 	if (!('innerHTML' in Element.prototype)) {
 		copyProperty('innerHTML', HTMLElement.prototype, Element.prototype);
+	}
+	if (!('runtimeStyle' in Element.prototype)) { // new
+		copyProperty('runtimeStyle', HTMLElement.prototype, Element.prototype);
 	}
 	if (!('sheet' in SVGStyleElement.prototype)) {
 		Object.defineProperty(SVGStyleElement.prototype, 'sheet', {
@@ -200,8 +203,8 @@
 
 	function parseRewrittenStyle(style) { // less memory then parameter cssText?
 
-		// beta
-		style['z-index']; // ie11 can access unknown properties in stylesheets only if accessed a dashed known property
+		// ie11 can access unknown properties in stylesheets only if accessed a dashed known property
+		style['z-index'] === style && x(); // do something (compare and call) just for minifiers
 
 		const cssText = style.cssText;
 		var matchesGetters = cssText.match(regRuleIEGetters), j, match;
@@ -417,6 +420,9 @@
 		}
 		var style = getComputedStyle(el);
 		let css = '';
+
+		el.runtimeStyle.cssText = ''; // new
+
 		for (var prop in el.ieCPSelectors) {
 			var important = style['-ieVar-❗' + prop];
 			let valueWithVar = important || style['-ieVar-' + prop];
@@ -433,9 +439,11 @@
 					// beta
 					if (!important && details.allByRoot !== false) continue; // dont have to draw root-properties
 
-					//let selector = item.selector.replace(/>? \.[^ ]+/, ' ', item.selector); // todo: try to equalize specificity
-					let selector = item.selector;
-					css += selector + '.iecp-u' + el.ieCP_unique + item.pseudo + '{' + prop + ':' + value + '}\n';
+					if (item.pseudo) {
+						css += item.selector + '.iecp-u' + el.ieCP_unique + item.pseudo + '{' + prop + ':' + value + '}\n';
+					} else {
+						el.runtimeStyle[prop] = value;  // new
+					}
 				}
 			}
 		}
