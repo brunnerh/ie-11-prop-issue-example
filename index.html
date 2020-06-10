@@ -9,15 +9,21 @@
 
 <body>
 	<label>
-		<input type="checkbox" />
+		<input id="toggle" type="checkbox" />
 		Dark
 	</label>
 
+	<button id="set-property" type="button">Call setProperty</button>
+
 	<script src="./ie11CustomProperties.js"></script>
 	<script>
-		document.querySelector('input').addEventListener('change', function ()
+		document.querySelector('#toggle').addEventListener('change', function ()
 		{
 			document.documentElement.setAttribute('class', this.checked ? 'dark' : 'light');
+		});
+		document.querySelector('#set-property').addEventListener('click', function ()
+		{
+			document.documentElement.style.setProperty('--dummy', '0');
 		});
 	</script>
 </body>
